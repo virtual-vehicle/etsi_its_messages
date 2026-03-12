@@ -220,6 +220,8 @@ def main():
         msg_type = "VAM"
     elif args.type == "mcm_uulm":
         msg_type = "MCM"
+    elif args.type == "rtcmem_ts":
+        msg_type = "RTCMEM"
     header_files = findDependenciesOfConversionHeaders(os.path.join(args.output_dir, f"convert{msg_type}.h"), args.type, [f"convert{msg_type}"])
     header_files += additionalMessageTypes(args.output_dir, msg_type)
     header_files = sortHeaderFiles(header_files)

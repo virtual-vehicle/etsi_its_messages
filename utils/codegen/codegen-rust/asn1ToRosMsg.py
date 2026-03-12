@@ -207,6 +207,8 @@ def main():
         msg_type = "SPATEM"
     elif args.type == "vam_ts":
         msg_type = "VAM"
+    elif args.type == "rtcmem_ts":
+        msg_type = "RTCMEM"
 
     msg_files = findDependenciesOfRosMessageType(os.path.join(args.output_dir, f"{msg_type}.msg"), [msg_type])
     generateCMakeLists(msg_files, os.path.join(args.output_dir, "../CMakeLists.txt"), args.type)

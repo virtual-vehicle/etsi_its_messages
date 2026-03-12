@@ -133,6 +133,8 @@ def main():
         msg_type = "SPATEM"
     elif args.type == "vam_ts":
         msg_type = "VAM"
+    elif args.type == "rtcmem_ts":
+        msg_type = "RTCMEM"
 
     header_files = findDependenciesOfConversionHeaders(os.path.join(args.output_dir, f"convert{msg_type}.h"), args.type, [f"convert{msg_type}"])
 
