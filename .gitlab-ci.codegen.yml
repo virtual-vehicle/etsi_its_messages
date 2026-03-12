@@ -415,3 +415,17 @@ etsi_its_mcm_uulm_conversion:
       -t mcm_uulm
       -o etsi_its_conversion/etsi_its_mcm_uulm_conversion/include/etsi_its_mcm_uulm_conversion
     - if [[ ! -z "$(git status --porcelain)" ]]; then echo "Code generation script resulted in changes to the repository" && git diff; exit 1; fi
+
+etsi_its_rtcmem_ts_conversion:
+  stage: Conversion Headers
+  script:
+    - >
+      utils/codegen/codegen-py/asn1ToConversionHeader.py
+      asn1/raw/is_ts103301/RTCMEM-PDU-Descriptions.asn
+      asn1/raw/is_ts103301/cdd/ITS-Container.asn
+      asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn
+      asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn
+      asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn
+      -t rtcmem_ts
+      -o etsi_its_conversion/etsi_its_rtcmem_ts_conversion/include/etsi_its_rtcmem_ts_conversion
+    - if [[ ! -z "$(git status --porcelain)" ]]; then echo "Code generation script resulted in changes to the repository" && git diff; exit 1; fi
