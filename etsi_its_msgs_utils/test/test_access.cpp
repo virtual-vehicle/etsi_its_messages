@@ -56,6 +56,9 @@ namespace mapem_ts_msgs = etsi_its_mapem_ts_msgs::msg;
 namespace spatem_ts_msgs = etsi_its_spatem_ts_msgs::msg;
 #include <impl/test_spatem_ts_access.cpp>
 
+namespace ivim_ts_msgs = etsi_its_ivim_ts_msgs::msg;
+#include <impl/test_ivim_ts_access.cpp>
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
