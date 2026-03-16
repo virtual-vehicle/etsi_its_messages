@@ -23,6 +23,9 @@
 #include <etsi_its_spatem_ts_msgs/msg/spatem.hpp>
 #include <etsi_its_msgs_utils/spatem_ts_access.hpp>
 
+#include <etsi_its_rtcmem_ts_msgs/msg/rtcmem.hpp>
+#include <etsi_its_msgs_utils/rtcmem_ts_access.hpp>
+
 std::default_random_engine random_engine;
 double randomDouble(double min, double max) {
   std::uniform_real_distribution<double> uniform_distribution_double(min, max);
@@ -55,6 +58,9 @@ namespace mapem_ts_msgs = etsi_its_mapem_ts_msgs::msg;
 
 namespace spatem_ts_msgs = etsi_its_spatem_ts_msgs::msg;
 #include <impl/test_spatem_ts_access.cpp>
+
+namespace rtcmem_ts_msgs = etsi_its_rtcmem_ts_msgs::msg;
+#include <impl/test_rtcmem_ts_access.cpp>
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
