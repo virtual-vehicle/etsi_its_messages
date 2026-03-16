@@ -156,7 +156,7 @@ def findDependenciesOfConversionHeaders(parent_file_path: str, type: str, file_l
     new_file_list = file_list.copy()
 
     # load contents of conversion file
-    with open(parent_file_path, 'r') as file:
+    with r  as file:
         lines = file.readlines()
         for line in lines:
 
