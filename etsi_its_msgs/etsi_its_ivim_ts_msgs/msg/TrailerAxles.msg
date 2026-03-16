@@ -42,10 +42,10 @@
 # ------------------------------------------------------------------------------
 
 # --- ASN.1 Definition ---------------------------------------------------------
-# TrailerCharacteristicsFixValuesList ::= SEQUENCE (SIZE (1..4,...)) OF  VehicleCharacteristicsFixValues (WITH COMPONENTS {..., euroAndCo2value ABSENT, engineCharacteristics ABSENT})
+# TrailerAxles ::= INTEGER (0..7) -- number of axles of the trailer when available
 # ------------------------------------------------------------------------------
 
-VehicleCharacteristicsFixValues[] array
-uint8 MIN_SIZE = 1
-uint8 MAX_SIZE = 4
+uint8 value
+uint8 MIN = 0
+uint8 MAX = 7
 

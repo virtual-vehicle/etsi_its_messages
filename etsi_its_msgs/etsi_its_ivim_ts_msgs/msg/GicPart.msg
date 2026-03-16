@@ -43,16 +43,16 @@
 
 # --- ASN.1 Definition ---------------------------------------------------------
 # GicPart::= SEQUENCE {
-# 	detectionZoneIds		ZoneIds OPTIONAL,
+# 	detectionZoneIds		ZoneIds OPTIONAL, 
 # 	its-Rrid				VarLengthNumber OPTIONAL,
-# 	relevanceZoneIds		ZoneIds OPTIONAL,
+# 	relevanceZoneIds		ZoneIds OPTIONAL, 
 # 	direction				Direction OPTIONAL,
-# 	driverAwarenessZoneIds	ZoneIds OPTIONAL,
+# 	driverAwarenessZoneIds	ZoneIds OPTIONAL, 
 # 	minimumAwarenessTime	INTEGER (0..255) OPTIONAL,
 # 	applicableLanes			LanePositions OPTIONAL,
 # 	iviType					IviType,
 # 	iviPurpose				IviPurpose OPTIONAL,
-# 	laneStatus				LaneStatus OPTIONAL,
+# 	laneStatus				LaneStatus OPTIONAL,	
 # 	vehicleCharacteristics	VehicleCharacteristicsList OPTIONAL,
 # 	driverCharacteristics	DriverCharacteristics OPTIONAL,
 # 	layoutId				INTEGER(1..4,...) OPTIONAL,
@@ -97,7 +97,7 @@ bool lane_status_is_present
 VehicleCharacteristicsList vehicle_characteristics
 bool vehicle_characteristics_is_present
 
-DriverCharacteristics driver_characteristics
+DriverCharacteristics2 driver_characteristics
 bool driver_characteristics_is_present
 
 uint8 layout_id

@@ -42,19 +42,22 @@
 # ------------------------------------------------------------------------------
 
 # --- ASN.1 Definition ---------------------------------------------------------
-# DriverCharacteristics::= INTEGER{
-# 	unexperiencedDrivers		(0),
-# 	experiencedDrivers			(1),
-# 	rfu1						(2),
-# 	rfu2						(3)
-# 	} (0..3)
+# TrailerDetails::= SEQUENCE {
+# trailerType INTEGER{
+# notPresent (0), -- trailer not attached or only one trailer attached, see
+# -- VehicleAxlesNumber for more information
+# trailer (1), -- also known as pull-bar trailer
+# semitrailer (2) -- also known as articulate trailer
+# -- (3..31) reserved for future CEN/ISO use
+# } (0..31),
 # ------------------------------------------------------------------------------
 
-uint8 value
-uint8 MIN = 0
-uint8 MAX = 3
-uint8 UNEXPERIENCED_DRIVERS = 0
-uint8 EXPERIENCED_DRIVERS = 1
-uint8 RFU1 = 2
-uint8 RFU2 = 3
+uint8 trailer_type
+uint8 TRAILER_TYPE_MIN = 0
+uint8 TRAILER_TYPE_MAX = 31
+uint8 TRAILER_TYPE_NOT_PRESENT = 0
+uint8 TRAILER_TYPE_TRAILER = 1
+uint8 TRAILER_TYPE_SEMITRAILER = 2
+
+TrailerAxles trailer_axles
 

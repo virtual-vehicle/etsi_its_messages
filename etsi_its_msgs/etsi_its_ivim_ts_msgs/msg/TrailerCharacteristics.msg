@@ -49,12 +49,9 @@
 #     }
 # ------------------------------------------------------------------------------
 
-TrailerCharacteristicsFixValuesList equal_to
-bool equal_to_is_present
+TrailerDetails trailer_details
 
-TrailerCharacteristicsFixValuesList not_equal_to
-bool not_equal_to_is_present
+Int2 trailer_max_laden_weight
 
-TrailerCharacteristicsRangesList ranges
-bool ranges_is_present
+Int2 trailer_weight_unladen
 

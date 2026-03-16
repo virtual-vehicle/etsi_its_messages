@@ -44,7 +44,7 @@
 # --- ASN.1 Definition ---------------------------------------------------------
 # RoadSurfaceDynamicCharacteristics::= SEQUENCE{
 # 	condition				Condition,
-# 	temperature				Temperature2,
+# 	temperature				Temperature,
 # 	iceOrWaterDepth			Depth,
 # 	treatment				TreatmentType
 # 	}

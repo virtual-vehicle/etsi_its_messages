@@ -42,10 +42,19 @@
 # ------------------------------------------------------------------------------
 
 # --- ASN.1 Definition ---------------------------------------------------------
-# TrailerCharacteristicsRangesList ::= SEQUENCE (SIZE (1..4,...)) OF  VehicleCharacteristicsRanges (WITH COMPONENTS {comparisonOperator, limits (WITH COMPONENTS {..., exhaustEmissionValues ABSENT, dieselEmissionValues ABSENT, soundLevel ABSENT})})
+# DriverCharacteristics::= INTEGER{
+# 	unexperiencedDrivers		(0),
+# 	experiencedDrivers			(1),
+# 	rfu1						(2),	
+# 	rfu2						(3)
+# 	} (0..3)
 # ------------------------------------------------------------------------------
 
-VehicleCharacteristicsRanges[] array
-uint8 MIN_SIZE = 1
-uint8 MAX_SIZE = 4
+uint8 value
+uint8 MIN = 0
+uint8 MAX = 3
+uint8 UNEXPERIENCED_DRIVERS = 0
+uint8 EXPERIENCED_DRIVERS = 1
+uint8 RFU1 = 2
+uint8 RFU2 = 3
 
