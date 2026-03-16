@@ -2,6 +2,7 @@
 # MIT License
 #
 # Copyright (c) 2023-2025 Institute for Automotive Engineering (ika), RWTH Aachen University
+# Copyright (c) 2026 Virtual Vehicle Research GmbH
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -271,59 +272,103 @@ def docForAsn1Type(asn1_type: str, asn1_docs: Dict) -> Optional[str]:
 
 
 def extractAsn1TypesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
-    """Extracts all parsed ASN1 type information from multiple ASN1 documents.
+    """
+    Extract all parsed ASN.1 type information from multiple ASN.1 documents.
 
-    Args:
-        asn1_docs (Dict): type information by document
-
-    Raises:
-        ValueError: if a type is found in multiple documents
-
-    Returns:
-        Dict[str, Dict]: type information by type
+    If a type name appears in multiple documents, keep the first occurrence as-is
+    and rename later occurrences by appending an integer suffix: Foo, Foo2, Foo3, ...
+    Also patch local member references inside the renamed document accordingly.
     """
 
-    asn1_types = {}
+    # (doc, original_name) -> renamed_name
+    rename_map: Dict[Tuple[str, str], str] = {}
+
+    # base_name -> how many times we've emitted it
+    used_counts: Dict[str, int] = {}
+
+    def unique_name(base: str) -> str:
+        n = used_counts.get(base, 0) + 1
+        used_counts[base] = n
+        return base if n == 1 else f"{base}{n}"  # no underscore
+
+    # pass 1: decide renamed names for every (doc, type)
     for doc, asn1 in asn1_docs.items():
-        for type in asn1["types"]:
-            if type not in asn1_types:
-                if "members" in asn1["types"][type]:
-                    # filter out None members (representing ASN1 extensions)
-                    asn1["types"][type]["members"] = [member for member in asn1["types"][type]["members"] if member is not None]
-                    # flatten lists in members (representing ASN1 extensions)
-                    flattened_members = []
-                    for member in asn1["types"][type]["members"]:
-                        if isinstance(member, list):
-                            flattened_members.extend(member)
-                        else:
-                            flattened_members.append(member)
-                    asn1["types"][type]["members"] = flattened_members
-                asn1_types[type] = asn1["types"][type]
-            else:
-                raise ValueError(f"Type '{type}' from '{doc}' is a duplicate")
+        for t in asn1["types"].keys():
+            rename_map[(doc, t)] = unique_name(t)
+
+    # helper: patch a member dict in-place
+    def patch_member_type(member: Dict, doc: str):
+        # components-of becomes type
+        if "components-of" in member:
+            member["type"] = member["components-of"]
+
+        mt = member.get("type")
+        if not mt:
+            return
+
+        # If the referenced type is defined in THIS doc, patch it to the renamed one.
+        # This keeps local references consistent even when this doc's type got renamed.
+        if mt in asn1_docs[doc]["types"]:
+            member["type"] = rename_map[(doc, mt)]
+        # else: external reference left untouched (first-definition wins globally)
+
+    # pass 2: build flattened + patched type dict, keyed by renamed type names
+    asn1_types: Dict[str, Dict] = {}
+
+    for doc, asn1 in asn1_docs.items():
+        for t, info in asn1["types"].items():
+            new_name = rename_map[(doc, t)]
+
+            # copy (shallow) so we can mutate safely
+            patched = dict(info)
+
+            if "members" in patched:
+                # filter out None members (extensions)
+                members = [m for m in patched["members"] if m is not None]
+
+                # flatten lists in members (extensions)
+                flattened = []
+                for m in members:
+                    if isinstance(m, list):
+                        flattened.extend([x for x in m if x is not None])
+                    else:
+                        flattened.append(m)
+
+                # patch member type references (in-place)
+                for m in flattened:
+                    if isinstance(m, dict):
+                        patch_member_type(m, doc)
+
+                patched["members"] = flattened
+
+            # store under renamed type name
+            asn1_types[new_name] = patched
 
     return asn1_types
 
 def extractAsn1ValuesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
-    """Extracts all parsed ASN1 value information from multiple ASN1 documents.
-
-    Args:
-        asn1_docs (Dict): type information by document
-
-    Raises:
-        ValueError: if a type is found in multiple documents
-
-    Returns:
-        Dict[str, Dict]: value information by name
     """
+    Extract all parsed ASN.1 value information from multiple ASN.1 documents.
 
-    asn1_values = {}
+    If a value name appears in multiple documents, rename later occurrences by
+    appending an integer suffix: version, version2, version3, ...
+    """
+    asn1_values: Dict[str, Dict] = {}
+    used_counts: Dict[str, int] = {}
+
+    def unique(name: str) -> str:
+        n = used_counts.get(name, 0) + 1
+        used_counts[name] = n
+        return name if n == 1 else f"{name}{n}"
+
     for doc, asn1 in asn1_docs.items():
-        for value in asn1["values"]:
-            if value not in asn1_values:
-                asn1_values[value] = asn1["values"][value]
-            else:
-                raise ValueError(f"Value '{value}' from '{doc}' is a duplicate")
+        for value_name, value_info in asn1["values"].items():
+            new_name = unique(value_name)
+            if new_name != value_name:
+                logging.warning(
+                    f"Value '{value_name}' from '{doc}' is a duplicate; renamed to '{new_name}'"
+                )
+            asn1_values[new_name] = value_info
 
     return asn1_values
 

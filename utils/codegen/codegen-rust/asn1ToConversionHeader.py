@@ -4,6 +4,7 @@
 # MIT License
 #
 # Copyright (c) 2023-2025 Institute for Automotive Engineering (ika), RWTH Aachen University
+# Copyright (c) 2026 Virtual Vehicle Research GmbH
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -133,6 +134,8 @@ def main():
         msg_type = "SPATEM"
     elif args.type == "vam_ts":
         msg_type = "VAM"
+    elif args.type == "ivim_ts":
+        msg_type = "IVIM"
 
     header_files = findDependenciesOfConversionHeaders(os.path.join(args.output_dir, f"convert{msg_type}.h"), args.type, [f"convert{msg_type}"])
 

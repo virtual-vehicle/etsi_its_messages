@@ -25,7 +25,8 @@ use super::*;
 
 impl Msgs {
     pub fn inner_name(&self, name: &String, parent_name: &String) -> String {
-        format!("{}{}", parent_name, name)
+        let raw = format!("{}{}", parent_name, name);
+        self.msg_name(&raw)
     }
 
     pub fn int_type_token(
@@ -322,9 +323,7 @@ impl Msgs {
                     self.constraints_and_type_name(&s.element_type, name, parent_name)?;
                 (s.constraints().clone(), format!("{inner_type}[]").into())
             }
-            ASN1Type::ElsewhereDeclaredType(e) => {
-                (e.constraints.clone(), to_ros_title_case(&e.identifier))
-            }
+            ASN1Type::ElsewhereDeclaredType(e) => Ok(self.msg_name(&e.identifier)),
             ASN1Type::InformationObjectFieldReference(_)
             | ASN1Type::EmbeddedPdv
             | ASN1Type::External => {
@@ -431,7 +430,9 @@ impl Msgs {
                 NotYetInplemented,
                 "Set values are currently unsupported!"
             )),
-            ASN1Type::ElsewhereDeclaredType(e) => Ok(e.identifier.clone()),
+            ASN1Type::ElsewhereDeclaredType(e) => {
+                (e.constraints.clone(), self.msg_name(&e.identifier))
+            },
             ASN1Type::InformationObjectFieldReference(_) => Err(error!(
                 NotYetInplemented,
                 "Information Object field reference values are currently unsupported!"
@@ -590,7 +591,7 @@ impl Msgs {
                         parent_name,
                         "-".repeat(47 - parent_name.len())
                     ).into(),
-                    name: self.inner_name(&m.name, parent_name).to_string(),
+                    name: format!("{}{}", parent_name, m.name),
                     ty: m.ty.clone(),
                     tag: None,
                     index: None,
@@ -639,7 +640,7 @@ impl Msgs {
                         parent_name,
                         "-".repeat(47 - parent_name.len())
                     ).into(),
-                    name: self.inner_name(&m.name, parent_name).to_string(),
+                    name: format!("{}{}", parent_name, m.name),
                     ty: m.ty.clone(),
                     tag: None,
                     index: None,
