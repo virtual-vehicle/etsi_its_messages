@@ -271,34 +271,97 @@ def docForAsn1Type(asn1_type: str, asn1_docs: Dict) -> Optional[str]:
     return None
 
 
-def extractAsn1TypesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
+def extractAsn1TypesFromDocs(asn1_docs: Dict) -> Tuple[Dict[str, str], Dict[str, Dict]]:
     """
-    Extract all parsed ASN.1 type information from multiple ASN.1 documents.
-
-    If a type name appears in multiple documents, keep the first occurrence as-is
-    and rename later occurrences by appending an integer suffix: Foo, Foo2, Foo3, ...
-    Also patch local member references inside the renamed document accordingly.
+    If a type name appears in multiple documents:
+      - keep first occurrence as-is
+      - rename later occurrences by appending an integer suffix: Foo, Foo2, Foo3, ...
+    Also patch member["type"] references to point to the renamed versions.
+    Returns:
+      origin_map: renamed_name -> original_name
+      asn1_types: renamed_name -> type_info
     """
 
-    # (doc, original_name) -> renamed_name
     rename_map: Dict[Tuple[str, str], str] = {}
-
-    # base_name -> how many times we've emitted it
     used_counts: Dict[str, int] = {}
+    origin_map: Dict[str, str] = {}
+
+    # type -> [doc1, doc2, ...] in deterministic order
+    type_docs: Dict[str, List[str]] = {}
+
+    # pass 1: deterministic ordering + special canonical doc for StationType
+    for doc in sorted(asn1_docs.keys()):
+        asn1 = asn1_docs[doc]
+        for t in asn1["types"].keys():
+            type_docs.setdefault(t, []).append(doc)
 
     def unique_name(base: str) -> str:
         n = used_counts.get(base, 0) + 1
         used_counts[base] = n
-        return base if n == 1 else f"{base}{n}"  # no underscore
+        return base if n == 1 else f"{base}{n}"
 
-    # pass 1: decide renamed names for every (doc, type)
-    for doc, asn1 in asn1_docs.items():
-        for t in asn1["types"].keys():
-            rename_map[(doc, t)] = unique_name(t)
+    rename_map: Dict[Tuple[str, str], str] = {}
 
-    # helper: patch a member dict in-place
+    for t, docs in type_docs.items():
+        docs_sorted = sorted(docs)
+
+        # --- Special case: StationType -> prefer ITS-Container as canonical name (no suffix)
+        if t == "StationType":
+            preferred = None
+            for d in docs_sorted:
+                dl = d.lower()
+                if "its-container" in dl or "its_container" in dl:
+                    preferred = d
+                    break
+
+            if preferred is not None:
+                # assign canonical first
+                rename_map[(preferred, t)] = unique_name(t)
+                # assign remaining
+                for d in docs_sorted:
+                    if d == preferred:
+                        continue
+                    rename_map[(d, t)] = unique_name(t)
+                continue
+
+        # default behaviour
+        for d in docs_sorted:
+            rename_map[(d, t)] = unique_name(t)
+
+    def pick_renamed_type(ref_type: str, current_doc: str) -> Optional[str]:
+        """
+        Decide which renamed type name a reference should point to.
+        """
+        # Special case: StationType outside ITS-Container should use the 2nd definition if available.
+        if ref_type == "StationType":
+            doc_l = current_doc.lower()
+            outside_its_container = ("its-container" not in doc_l and "its_container" not in doc_l)
+            docs = type_docs.get("StationType", [])
+            if outside_its_container and len(docs) >= 2:
+                return rename_map[(docs[1], "StationType")]  # -> StationType2
+            # else fallback to first definition
+            if docs:
+                return rename_map[(docs[0], "StationType")]
+
+        # Normal case: if ref_type is defined in current doc, use that local renamed name
+        if ref_type in asn1_docs[current_doc]["types"]:
+            return rename_map[(current_doc, ref_type)]
+
+        # Otherwise point to the first definition (global "canonical")
+        docs = type_docs.get(ref_type)
+
+        if docs:
+            # Prefer the definition coming from the ITS-Container document
+            for d in docs:
+                if "its-container" in d.lower() or "its_container" in d.lower():
+                    return rename_map[(d, ref_type)]
+
+            # Otherwise fall back to the first available definition
+            return rename_map[(docs[0], ref_type)]
+
+        return None  # unknown / primitive / etc.
+
     def patch_member_type(member: Dict, doc: str):
-        # components-of becomes type
         if "components-of" in member:
             member["type"] = member["components-of"]
 
@@ -306,27 +369,21 @@ def extractAsn1TypesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
         if not mt:
             return
 
-        # If the referenced type is defined in THIS doc, patch it to the renamed one.
-        # This keeps local references consistent even when this doc's type got renamed.
-        if mt in asn1_docs[doc]["types"]:
-            member["type"] = rename_map[(doc, mt)]
-        # else: external reference left untouched (first-definition wins globally)
+        renamed = pick_renamed_type(mt, doc)
+        if renamed is not None:
+            member["type"] = renamed
 
-    # pass 2: build flattened + patched type dict, keyed by renamed type names
+    # pass 2: also deterministic ordering
     asn1_types: Dict[str, Dict] = {}
-
-    for doc, asn1 in asn1_docs.items():
+    for doc in sorted(asn1_docs.keys()):
+        asn1 = asn1_docs[doc]
         for t, info in asn1["types"].items():
             new_name = rename_map[(doc, t)]
-
-            # copy (shallow) so we can mutate safely
             patched = dict(info)
 
             if "members" in patched:
-                # filter out None members (extensions)
                 members = [m for m in patched["members"] if m is not None]
 
-                # flatten lists in members (extensions)
                 flattened = []
                 for m in members:
                     if isinstance(m, list):
@@ -334,17 +391,16 @@ def extractAsn1TypesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
                     else:
                         flattened.append(m)
 
-                # patch member type references (in-place)
                 for m in flattened:
                     if isinstance(m, dict):
                         patch_member_type(m, doc)
 
                 patched["members"] = flattened
 
-            # store under renamed type name
+            origin_map[new_name] = t
             asn1_types[new_name] = patched
 
-    return asn1_types
+    return origin_map, asn1_types
 
 def extractAsn1ValuesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
     """
@@ -361,7 +417,8 @@ def extractAsn1ValuesFromDocs(asn1_docs: Dict) -> Dict[str, Dict]:
         used_counts[name] = n
         return name if n == 1 else f"{name}{n}"
 
-    for doc, asn1 in asn1_docs.items():
+    for doc in sorted(asn1_docs.keys()):
+        asn1 = asn1_docs[doc]
         for value_name, value_info in asn1["values"].items():
             new_name = unique(value_name)
             if new_name != value_name:

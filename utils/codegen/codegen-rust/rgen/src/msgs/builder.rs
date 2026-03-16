@@ -11,9 +11,10 @@ pub(crate) const INNER_ARRAY_LIKE_PREFIX: &str = "Anonymous_"; // TODO: what doe
 
 macro_rules! call_template {
     ($self:ident, $fn:ident, $tld:ident, $($args:expr),*) => {
+        let msg_name = $self.msg_name(&$tld.name);
         Ok($fn(
                 &$self.format_comments(&$tld.comments)?,
-                (&$tld.name),
+                &msg_name,
                 $($args),*
         ))
     };
@@ -125,9 +126,10 @@ impl Msgs {
         tld: ToplevelTypeDefinition,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::ElsewhereDeclaredType(dec) = &tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(typealias_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 &dec.identifier,
                 "",
             ))
@@ -174,9 +176,11 @@ impl Msgs {
 
     pub fn generate_integer(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
         if let ASN1Type::Integer(ref int) = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
+
             Ok(integer_template(
                 &self.format_comments(&tld.comments)?,
-                &to_ros_title_case(&tld.name),
+                &msg_name,
                 &self.format_constraints(true, &int.constraints)?.replace("{prefix}", ""),
                 int.int_type().to_str(),
                 &self.format_distinguished_values(&int.distinguished_values),
@@ -195,9 +199,10 @@ impl Msgs {
         tld: ToplevelTypeDefinition,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::BitString(ref bitstr) = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(bit_string_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 &self.format_constraints(true, &bitstr.constraints)?
                     .replace("{prefix}", "")
                     .replace("SIZE =", "SIZE_BITS ="),
@@ -217,9 +222,10 @@ impl Msgs {
         tld: ToplevelTypeDefinition,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::OctetString(ref oct_str) = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(octet_string_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 &self.format_constraints(false, &oct_str.constraints)?.replace("{prefix}", ""),
             ))
         } else {
@@ -236,9 +242,10 @@ impl Msgs {
         tld: ToplevelTypeDefinition,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::CharacterString(ref char_str) = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(char_string_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 &self.string_type(&char_str.ty)?,
                 &self.format_constraints(false, &char_str.constraints)?.replace("{prefix}", ""),
             ))
@@ -253,9 +260,10 @@ impl Msgs {
 
     pub fn generate_boolean(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
         if let ASN1Type::Boolean(_) = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(boolean_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 "",
             ))
         } else {
@@ -342,9 +350,10 @@ impl Msgs {
     }
 
     pub fn generate_any(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
+        let msg_name = self.msg_name(&tld.name);
         Ok(any_template(
             &self.format_comments(&tld.comments)?,
-            &tld.name,
+            &msg_name,
             "",
         ))
     }
@@ -354,9 +363,10 @@ impl Msgs {
         tld: ToplevelTypeDefinition,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::GeneralizedTime(_) = &tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(generalized_time_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 "",
             ))
         } else {
@@ -370,9 +380,10 @@ impl Msgs {
 
     pub fn generate_utc_time(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
         if let ASN1Type::UTCTime(_) = &tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(utc_time_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 "",
             ))
         } else {
@@ -386,9 +397,10 @@ impl Msgs {
 
     pub fn generate_oid(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
         if let ASN1Type::ObjectIdentifier(_oid) = &tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(oid_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 "",
             ))
         } else {
@@ -402,9 +414,10 @@ impl Msgs {
 
     pub fn generate_null(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
         if let ASN1Type::Null = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(null_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 "",
             ))
         } else {
@@ -421,9 +434,10 @@ impl Msgs {
         tld: ToplevelTypeDefinition,
     ) -> Result<String, GeneratorError> {
         if let ASN1Type::Enumerated(ref enumerated) = tld.ty {
+            let msg_name = self.msg_name(&tld.name);
             Ok(enumerated_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 &self.format_enum_members(enumerated),
                 "",
             ))
@@ -439,9 +453,10 @@ impl Msgs {
     pub fn generate_choice(&self, tld: ToplevelTypeDefinition) -> Result<String, GeneratorError> {
         if let ASN1Type::Choice(ref choice) = tld.ty {
             let inner_options = self.format_nested_choice_options(choice, &tld.name)?;
+            let msg_name = self.msg_name(&tld.name);
             Ok(choice_template(
                 &self.format_comments(&tld.comments)?,
-                &tld.name,
+                &msg_name,
                 &self.format_choice_options(choice, &tld.name)?,
                 inner_options,
                 "",
@@ -462,9 +477,10 @@ impl Msgs {
         match tld.ty {
             ASN1Type::Sequence(ref seq) | ASN1Type::Set(ref seq) => {
                 let declaration = self.format_sequence_or_set_members(seq, &tld.name)?;
+                let msg_name = self.msg_name(&tld.name);
                 Ok(sequence_or_set_template(
                     &self.format_comments(&tld.comments)?,
-                    &tld.name,
+                    &msg_name,
                     &declaration,
                     self.format_nested_sequence_members(seq, &tld.name)?,
                     "",
@@ -495,6 +511,11 @@ impl Msgs {
                 ))
             }
         };
+        
+        let msg_name = self.msg_name(&tld.name);
+        let anon_raw = format!("{}{}", INNER_ARRAY_LIKE_PREFIX, tld.name);
+        let anon_msg_name = self.msg_name(&anon_raw);
+
         let anonymous_item = match seq_or_set_of.element_type.as_ref() {
             ASN1Type::ElsewhereDeclaredType(_) => None,
             n => Some(
@@ -504,7 +525,7 @@ impl Msgs {
                         " Anonymous {} OF member ",
                         if is_set_of { "SET" } else { "SEQUENCE" }
                     ),
-                    name: String::from(INNER_ARRAY_LIKE_PREFIX) + &tld.name,
+                    name: anon_raw.clone(),
                     ty: n.clone(),
                     tag: None,
                     index: None,
@@ -513,15 +534,15 @@ impl Msgs {
         }
         .unwrap_or_default();
         let member_type = match seq_or_set_of.element_type.as_ref() {
-            ASN1Type::ElsewhereDeclaredType(d) => d.identifier.clone(),
-            _ => format!("Anonymous{}", &tld.name),
+            ASN1Type::ElsewhereDeclaredType(d) => self.msg_name(&d.identifier),
+            _ => anon_msg_name.clone(),
         };
         let constraints =
             self.format_constraints(true, &seq_or_set_of.constraints)?.replace("{prefix}", "");
         Ok(sequence_or_set_of_template(
             is_set_of,
             &self.format_comments(&tld.comments)?,
-            &tld.name,
+            &msg_name, 
             &anonymous_item,
             &member_type,
             &constraints,
@@ -662,7 +683,7 @@ impl Msgs {
                     format!("{type_id} {}", to_ros_snake_case(variant_name))
                 });
 
-                let field_enum_type_name = to_ros_title_case(&field_enum_name);
+                let field_enum_type_name = self.msg_name(&field_enum_name);
                 field_enums.push(format!(
                     "<typename>OPEN-TYPE {field_enum_type_name}</typename>\n{class_unique_id_type_name} choice\n{}",
                     variants.fold("".to_string(), |mut acc, v| {

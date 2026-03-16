@@ -4,7 +4,7 @@
 # MIT License
 #
 # Copyright (c) 2023-2025 Institute for Automotive Engineering (ika), RWTH Aachen University
-#
+# Copyright (c) 2026 Virtual Vehicle Research GmbH
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -207,6 +207,8 @@ def main():
         msg_type = "SPATEM"
     elif args.type == "vam_ts":
         msg_type = "VAM"
+    elif args.type == "ivim_ts":
+        msg_type = "IVIM"
 
     msg_files = findDependenciesOfRosMessageType(os.path.join(args.output_dir, f"{msg_type}.msg"), [msg_type])
     generateCMakeLists(msg_files, os.path.join(args.output_dir, "../CMakeLists.txt"), args.type)
