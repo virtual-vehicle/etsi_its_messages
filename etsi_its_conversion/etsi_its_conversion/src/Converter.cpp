@@ -961,8 +961,8 @@ void Converter::rosCallback(const typename T_ros::UniquePtr msg,
   else if (type == "mapem_ts") btp_header_destination_port = kBtpHeaderDestinationPortMapem;
   else if (type == "mcm_uulm") btp_header_destination_port = kBtpHeaderDestinationPortMcmUulm;
   else if (type == "spatem_ts") btp_header_destination_port = kBtpHeaderDestinationPortSpatem;
-  else if (type == "rtcmem_ts") btp_header_destination_port = kBtpHeaderDestinationPortRtcmem;
   else if (type == "vam_ts") btp_header_destination_port = kBtpHeaderDestinationPortVamTs;
+  else if (type == "rtcmem_ts") btp_header_destination_port = kBtpHeaderDestinationPortRtcmem;
 
   // encode ROS msg to UDP msg
   UdpPacket udp_msg;

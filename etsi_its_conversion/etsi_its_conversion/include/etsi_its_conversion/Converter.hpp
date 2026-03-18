@@ -217,7 +217,7 @@ class Converter : public rclcpp::Node {
     rclcpp::Service<conversion_srvs::ConvertMcmUulmToUdp>::SharedPtr convert_mcm_uulm_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertSpatemTsToUdp>::SharedPtr convert_spatem_ts_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertVamTsToUdp>::SharedPtr convert_vam_ts_to_udp_service_;
-    rclcpp::Service<conversion_srvs::ConvertSpatemTsToUdp>::SharedPtr convert_rtcmem_ts_to_udp_service_;
+    rclcpp::Service<conversion_srvs::ConvertRtcmemTsToUdp>::SharedPtr convert_rtcmem_ts_to_udp_service_;
 
     rclcpp::Service<conversion_srvs::ConvertUdpToCam>::SharedPtr convert_udp_to_cam_service_;
     rclcpp::Service<conversion_srvs::ConvertUdpToCamTs>::SharedPtr convert_udp_to_cam_ts_service_;
