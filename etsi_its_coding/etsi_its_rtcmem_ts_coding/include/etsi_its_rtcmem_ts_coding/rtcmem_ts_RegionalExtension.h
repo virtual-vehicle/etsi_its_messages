@@ -5,11 +5,6 @@
  * 	`asn1c -fcompound-names -fprefix=rtcmem_ts_ -no-gen-BER -no-gen-XER -no-gen-OER -no-gen-example -gen-UPER -gen-JER`
  */
 
-#ifndef	_rtcmem_ts_RegionalExtension_H_
-#define	_rtcmem_ts_RegionalExtension_H_
-
-
-#include <etsi_its_rtcmem_ts_coding/asn_application.h>
 
 /* Including external dependencies */
 #include "etsi_its_rtcmem_ts_coding/rtcmem_ts_RegionId.h"
@@ -29,6 +24,11 @@
 #include "etsi_its_rtcmem_ts_coding/rtcmem_ts_RequestorDescription-addGrpC.h"
 #include "etsi_its_rtcmem_ts_coding/rtcmem_ts_RestrictionUserType-addGrpC.h"
 #include "etsi_its_rtcmem_ts_coding/rtcmem_ts_SignalStatusPackage-addGrpC.h"
+#ifndef	_rtcmem_ts_RegionalExtension_H_
+#define	_rtcmem_ts_RegionalExtension_H_
+
+
+#include <etsi_its_rtcmem_ts_coding/asn_application.h>
 
 #ifdef __cplusplus
 extern "C" {
