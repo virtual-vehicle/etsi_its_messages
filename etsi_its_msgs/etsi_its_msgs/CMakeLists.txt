@@ -10,6 +10,7 @@ find_package(etsi_its_denm_ts_msgs REQUIRED)
 find_package(etsi_its_mapem_ts_msgs REQUIRED)
 find_package(etsi_its_spatem_ts_msgs REQUIRED)
 find_package(etsi_its_vam_ts_msgs REQUIRED)
+find_package(etsi_its_rtcmem_ts_msgs REQUIRED)
 
 ament_export_dependencies(
   etsi_its_cam_msgs
@@ -20,6 +21,7 @@ ament_export_dependencies(
   etsi_its_mapem_ts_msgs
   etsi_its_spatem_ts_msgs
   etsi_its_vam_ts_msgs
+  etsi_its_rtcmem_ts_msgs
 )
 
 ament_package()
