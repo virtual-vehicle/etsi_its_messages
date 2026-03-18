@@ -12,6 +12,7 @@ find_package(etsi_its_mapem_ts_conversion REQUIRED)
 find_package(etsi_its_mcm_uulm_conversion REQUIRED)
 find_package(etsi_its_spatem_ts_conversion REQUIRED)
 find_package(etsi_its_vam_ts_conversion REQUIRED)
+find_package(etsi_its_rtcmem_ts_conversion REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(ros_environment REQUIRED)
@@ -49,6 +50,7 @@ ament_target_dependencies(${PROJECT_NAME}
   etsi_its_mcm_uulm_conversion
   etsi_its_spatem_ts_conversion
   etsi_its_vam_ts_conversion
+  etsi_its_rtcmem_ts_conversion
   rclcpp
   rclcpp_components
   udp_msgs
