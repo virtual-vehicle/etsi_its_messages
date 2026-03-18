@@ -93,14 +93,14 @@ void toRos_{{ros_msg_type}}(const {{etsi_type}}_{{asn1_type_name|replace("-", "_
 {% endfor %}
 }
 
-void toStruct_{{ros_msg_type}}(const {{etsi_type}}_msgs::{{ros_msg_type}}& in, {{etsi_type}}_{{asn1_type_name|replace("-", "_")}}_t& out) {
-  memset(&out, 0, sizeof({{etsi_type}}_{{asn1_type_name|replace("-", "_")}}_t));
+void toStruct_{{ros_msg_type}}(const {{etsi_type}}_msgs::{{ros_msg_type}}& in, {{etsi_type}}_{{c_type_name}}_t& out) {
+  memset(&out, 0, sizeof({{etsi_type}}_{{c_type_name}}_t));
 {%- for member in members -%}
 {% if member.optional %}
   if (in.{{member.ros_field_name}}_is_present) {
 {%- if "[]" in member.ros_msg_type %}
     for (int i = 0; i < in.{{member.ros_field_name}}.size(); ++i) {
-      {{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t* el = ({{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t));
+      {{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t* el = ({{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t));
       toStruct_{{member.ros_msg_type|replace("[]", "")}}(in.{{member.ros_field_name}}[i], *el);
       if (asn_sequence_add(&out.{{member.extension_prefix}}{{member.c_field_name}}, el)) throw std::invalid_argument("Failed to add to A_SEQUENCE_OF");
     }
@@ -115,7 +115,7 @@ void toStruct_{{ros_msg_type}}(const {{etsi_type}}_msgs::{{ros_msg_type}}& in, {
 {%- elif member.default and member.default.ros_value != 0 %}
 {%- if "[]" in member.ros_msg_type %}
     for (int i = 0; i < in.{{member.ros_field_name}}.size(); ++i) {
-      {{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t* el = ({{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t));
+      {{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t* el = ({{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t));
       toStruct_{{member.ros_msg_type|replace("[]", "")}}(in.{{member.ros_field_name}}[i], *el);
       if (asn_sequence_add(&out.{{member.extension_prefix}}{{member.c_field_name}}, el)) throw std::invalid_argument("Failed to add to A_SEQUENCE_OF");
     }
@@ -123,13 +123,13 @@ void toStruct_{{ros_msg_type}}(const {{etsi_type}}_msgs::{{ros_msg_type}}& in, {
   out.{{member.extension_prefix}}{{member.c_field_name}} = ({{member.asn1_type_name}}_t*) calloc(1, sizeof({{member.asn1_type_name}}_t));
   etsi_its_primitives_conversion::toStruct_{{member.asn1_type_name}}(in.{{member.ros_field_name}}, *out.{{member.extension_prefix}}{{member.c_field_name}});
 {%- else %}
-  out.{{member.extension_prefix}}{{member.c_field_name}} = ({{etsi_type}}_{{member.ros_msg_type}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.ros_msg_type}}_t));
+  out.{{member.extension_prefix}}{{member.c_field_name}} = ({{etsi_type}}_{{member.c_type_name}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.c_type_name}}_t));
   toStruct_{{member.ros_msg_type}}(in.{{member.ros_field_name}}, *out.{{member.extension_prefix}}{{member.c_field_name}});
 {%- endif %}
 {%- elif not member.is_choice_var %}
 {%- if "[]" in member.ros_msg_type %}
     for (int i = 0; i < in.{{member.ros_field_name}}.size(); ++i) {
-      {{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t* el = ({{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.ros_msg_type|replace("[]", "")}}_t));
+      {{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t* el = ({{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t*) calloc(1, sizeof({{etsi_type}}_{{member.c_type_name|replace("[]", "")}}_t));
       toStruct_{{member.ros_msg_type|replace("[]", "")}}(in.{{member.ros_field_name}}[i], *el);
       if (asn_sequence_add(&out.{{member.extension_prefix}}{{member.c_field_name}}, el)) throw std::invalid_argument("Failed to add to A_SEQUENCE_OF");
     }
@@ -148,4 +148,3 @@ void toStruct_{{ros_msg_type}}(const {{etsi_type}}_msgs::{{ros_msg_type}}& in, {
 }
 
 }
-

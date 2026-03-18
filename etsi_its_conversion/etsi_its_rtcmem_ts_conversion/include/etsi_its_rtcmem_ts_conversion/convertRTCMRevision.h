@@ -57,12 +57,12 @@ namespace rtcmem_ts_msgs = etsi_its_rtcmem_ts_msgs::msg;
 
 namespace etsi_its_rtcmem_ts_conversion {
 
-void toRos_RTCMRevision(const rtcmem_ts_RTCM-Revision_t& in, rtcmem_ts_msgs::RTCMRevision& out) {
+void toRos_RTCMRevision(const rtcmem_ts_RTCM_Revision_t& in, rtcmem_ts_msgs::RTCMRevision& out) {
   out.value = in;
 }
 
-void toStruct_RTCMRevision(const rtcmem_ts_msgs::RTCMRevision& in, rtcmem_ts_RTCM-Revision_t& out) {
-  memset(&out, 0, sizeof(rtcmem_ts_RTCM-Revision_t));
+void toStruct_RTCMRevision(const rtcmem_ts_msgs::RTCMRevision& in, rtcmem_ts_RTCM_Revision_t& out) {
+  memset(&out, 0, sizeof(rtcmem_ts_RTCM_Revision_t));
   out = in.value;
 }
 
