@@ -549,7 +549,7 @@ namespace access {
    * @return bool true if the bit is set
    */
   inline bool getGNSSstatusBit(const GNSSstatus& status, const uint8_t bit_index) {
-    throwIfOutOfRange(bit_index, 0u, static_cast<uint8_t>(GNSSstatus::SIZE_BITS - 1), "GNSSstatus bit index");
+    throwIfOutOfRange(bit_index, static_cast<uint8_t>(0), static_cast<uint8_t>(GNSSstatus::SIZE_BITS - 1), "GNSSstatus bit index");
 
     if (status.value.empty()) {
       return false;

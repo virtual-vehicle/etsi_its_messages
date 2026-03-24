@@ -550,7 +550,7 @@ namespace access {
    * @param value bit value
    */
   inline void setGNSSstatusBit(GNSSstatus& status, const uint8_t bit_index, const bool value) {
-    throwIfOutOfRange(bit_index, 0u, static_cast<uint8_t>(GNSSstatus::SIZE_BITS - 1), "GNSSstatus bit index");
+    throwIfOutOfRange(bit_index, static_cast<uint8_t>(0), static_cast<uint8_t>(GNSSstatus::SIZE_BITS - 1), "GNSSstatus bit index");
 
     ensureGNSSstatusStorage(status);
     const uint8_t mask = static_cast<uint8_t>(1u << bit_index);
