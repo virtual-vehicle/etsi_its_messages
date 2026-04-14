@@ -33,6 +33,8 @@ def generate_launch_description():
         DeclareLaunchArgument("output_topic_spatem_ts", default_value="~/spatem_ts/out"),
         DeclareLaunchArgument("input_topic_vam_ts", default_value="~/vam_ts/in"),
         DeclareLaunchArgument("output_topic_vam_ts", default_value="~/vam_ts/out"),
+        DeclareLaunchArgument("input_topic_ivim_ts", default_value="~/ivim_ts/in"),
+        DeclareLaunchArgument("output_topic_ivim_ts", default_value="~/ivim_ts/out"),
     ]
 
     args = [
