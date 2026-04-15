@@ -203,6 +203,7 @@ ros2 run etsi_its_conversion etsi_its_conversion_node --ros-args -p etsi_types:=
 | `~/mcm_uulm/udp` | `etsi_its_conversion_srvs/srv/ConvertMcmUulmToUdp` | Convert ROS MCM (UULM) to UDP payload |
 | `~/spatem_ts/udp` | `etsi_its_conversion_srvs/srv/ConvertSpatemTsToUdp` | Convert ROS SPATEM (TS) to UDP payload |
 | `~/vam_ts/udp` | `etsi_its_conversion_srvs/srv/ConvertVamTsoUdp` | Convert ROS VAM (TS) to UDP payload |
+| `~/ivim_ts/udp` | `etsi_its_conversion_srvs/srv/ConvertIvimTsoUdp` | Convert ROS IVIM (TS) to UDP payload |
 | `~/udp/cam` | `etsi_its_conversion_srvs/srv/ConvertUdpToCam` | Convert UDP payload to ROS CAM |
 | `~/udp/cam_ts` | `etsi_its_conversion_srvs/srv/ConvertUdpToCamTs` | Convert UDP payload to ROS CAM (TS) |
 | `~/udp/cpm_ts` | `etsi_its_conversion_srvs/srv/ConvertUdpToCpmTs` | Convert UDP payload to ROS CPM (TS) |
@@ -212,6 +213,7 @@ ros2 run etsi_its_conversion etsi_its_conversion_node --ros-args -p etsi_types:=
 | `~/udp/mcm_uulm` | `etsi_its_conversion_srvs/srv/ConvertUdpToMcmUulm` | Convert UDP payload to ROS MCM (UULM) |
 | `~/udp/spatem_ts` | `etsi_its_conversion_srvs/srv/ConvertUdpToSpatemTs` | Convert UDP payload to ROS SPATEM (TS) |
 | `~/udp/vam_ts` | `etsi_its_conversion_srvs/srv/ConvertUdpToVamTs` | Convert UDP payload to ROS VAM (TS) |
+| `~/udp/ivim_ts` | `etsi_its_conversion_srvs/srv/ConvertUdpToIvimTs` | Convert UDP payload to ROS IVIM (TS) |
 
 #### Parameters
 

@@ -89,10 +89,10 @@ const std::string Converter::kInputTopicVamTs{"~/vam_ts/in"};
 const std::string Converter::kOutputTopicVamTs{"~/vam_ts/out"};
 const std::string Converter::kServiceVamTsToUdp{"~/vam_ts/udp"};
 const std::string Converter::kServiceUdpToVamTs{"~/udp/vam_ts"};
-const std::string Converter::kInputTopicVamTs{"~/ivim_ts/in"};
-const std::string Converter::kOutputTopicVamTs{"~/ivim_ts/out"};
-const std::string Converter::kServiceVamTsToUdp{"~/ivim_ts/udp"};
-const std::string Converter::kServiceUdpToVamTs{"~/udp/ivim_ts"};
+const std::string Converter::kInputTopicIvimTs{"~/ivim_ts/in"};
+const std::string Converter::kOutputTopicIvimTs{"~/ivim_ts/out"};
+const std::string Converter::kServiceIvimTsToUdp{"~/ivim_ts/udp"};
+const std::string Converter::kServiceUdpToIvimTs{"~/udp/ivim_ts"};
 
 const std::string Converter::kHasBtpDestinationPortParam{"has_btp_destination_port"};
 const bool Converter::kHasBtpDestinationPortParamDefault{true};

@@ -77,6 +77,7 @@ The `etsi_its_conversion` package converts `etsi_its_msgs` ROS messages to and f
           - mcm_uulm
           - spatem_ts
           - vam_ts
+          - ivim_ts
         udp2ros_etsi_types:
           - cam
           - cpm_ts
@@ -85,6 +86,7 @@ The `etsi_its_conversion` package converts `etsi_its_msgs` ROS messages to and f
           - mcm_uulm
           - spatem_ts
           - vam_ts
+          - ivim_ts
     ```
 1. Launch the `udp_driver` node.
     ```bash
