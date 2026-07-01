@@ -9,6 +9,7 @@ find_package(etsi_its_cam_ts_msgs REQUIRED)
 find_package(etsi_its_cpm_ts_msgs REQUIRED)
 find_package(etsi_its_denm_msgs REQUIRED)
 find_package(etsi_its_denm_ts_msgs REQUIRED)
+find_package(etsi_its_ivim_ts_msgs REQUIRED)
 find_package(etsi_its_mapem_ts_msgs REQUIRED)
 find_package(etsi_its_mcm_uulm_msgs REQUIRED)
 find_package(etsi_its_spatem_ts_msgs REQUIRED)
@@ -24,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/ConvertCpmTsToUdp.srv"
   "srv/ConvertDenmToUdp.srv"
   "srv/ConvertDenmTsToUdp.srv"
+  "srv/ConvertIvimTsToUdp.srv"
   "srv/ConvertMapemTsToUdp.srv"
   "srv/ConvertMcmUulmToUdp.srv"
   "srv/ConvertSpatemTsToUdp.srv"
@@ -33,13 +35,26 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/ConvertUdpToCpmTs.srv"
   "srv/ConvertUdpToDenm.srv"
   "srv/ConvertUdpToDenmTs.srv"
+  "srv/ConvertUdpToIvimTs.srv"
   "srv/ConvertUdpToMapemTs.srv"
   "srv/ConvertUdpToMcmUulm.srv"
   "srv/ConvertUdpToSpatemTs.srv"
   "srv/ConvertUdpToVamTs.srv"
   "srv/ConvertUdpToRtcmemTs.srv"
   "srv/ConvertVamTsToUdp.srv"
-  DEPENDENCIES etsi_its_cam_msgs etsi_its_cam_ts_msgs etsi_its_cpm_ts_msgs etsi_its_denm_msgs etsi_its_denm_ts_msgs etsi_its_mapem_ts_msgs etsi_its_mcm_uulm_msgs etsi_its_spatem_ts_msgs etsi_its_vam_ts_msgs etsi_its_rtcmem_ts_msgs udp_msgs
+  DEPENDENCIES
+    etsi_its_cam_msgs
+    etsi_its_cam_ts_msgs
+    etsi_its_cpm_ts_msgs
+    etsi_its_denm_msgs
+    etsi_its_denm_ts_msgs
+    etsi_its_ivim_ts_msgs
+    etsi_its_mapem_ts_msgs
+    etsi_its_mcm_uulm_msgs
+    etsi_its_spatem_ts_msgs
+    etsi_its_vam_ts_msgs
+    etsi_its_rtcmem_ts_msgs 
+    udp_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)
