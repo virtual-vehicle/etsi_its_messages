@@ -1,26 +1,5 @@
-/** ============================================================================
-MIT License
-
-Copyright (c) 2023-2025 Institute for Automotive Engineering (ika), RWTH Aachen University
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-============================================================================= */
+// SPDX-License-Identifier: MIT
+// Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
 
 #pragma once
 
@@ -33,6 +12,7 @@ SOFTWARE.
 #include <etsi_its_conversion_srvs/srv/convert_cpm_ts_to_udp.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_denm_to_udp.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_denm_ts_to_udp.hpp>
+#include <etsi_its_conversion_srvs/srv/convert_ivim_ts_to_udp.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_mapem_ts_to_udp.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_mcm_uulm_to_udp.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_spatem_ts_to_udp.hpp>
@@ -42,6 +22,7 @@ SOFTWARE.
 #include <etsi_its_conversion_srvs/srv/convert_udp_to_cpm_ts.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_udp_to_denm.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_udp_to_denm_ts.hpp>
+#include <etsi_its_conversion_srvs/srv/convert_udp_to_ivim_ts.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_udp_to_mapem_ts.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_udp_to_mcm_uulm.hpp>
 #include <etsi_its_conversion_srvs/srv/convert_udp_to_spatem_ts.hpp>
@@ -51,6 +32,7 @@ SOFTWARE.
 #include <etsi_its_cpm_ts_conversion/convertCollectivePerceptionMessage.h>
 #include <etsi_its_denm_conversion/convertDENM.h>
 #include <etsi_its_denm_ts_conversion/convertDENM.h>
+#include <etsi_its_ivim_ts_conversion/convertIVIM.h>
 #include <etsi_its_mapem_ts_conversion/convertMAPEM.h>
 #include <etsi_its_mcm_uulm_conversion/convertMCM.h>
 #include <etsi_its_spatem_ts_conversion/convertSPATEM.h>
@@ -60,6 +42,7 @@ SOFTWARE.
 #include <etsi_its_cpm_ts_msgs/msg/collective_perception_message.hpp>
 #include <etsi_its_denm_msgs/msg/denm.hpp>
 #include <etsi_its_denm_ts_msgs/msg/denm.hpp>
+#include <etsi_its_ivim_ts_msgs/msg/ivim.hpp>
 #include <etsi_its_mapem_ts_msgs/msg/mapem.hpp>
 #include <etsi_its_mcm_uulm_msgs/msg/mcm.hpp>
 #include <etsi_its_spatem_ts_msgs/msg/spatem.hpp>
@@ -76,6 +59,7 @@ namespace cam_ts_msgs = etsi_its_cam_ts_msgs::msg;
 namespace cpm_ts_msgs = etsi_its_cpm_ts_msgs::msg;
 namespace denm_msgs = etsi_its_denm_msgs::msg;
 namespace denm_ts_msgs = etsi_its_denm_ts_msgs::msg;
+namespace ivim_ts_msgs = etsi_its_ivim_ts_msgs::msg;
 namespace mapem_ts_msgs = etsi_its_mapem_ts_msgs::msg;
 namespace mcm_uulm_msgs = etsi_its_mcm_uulm_msgs::msg;
 namespace spatem_ts_msgs = etsi_its_spatem_ts_msgs::msg;
@@ -152,6 +136,10 @@ class Converter : public rclcpp::Node {
     static const std::string kOutputTopicDenmTs;
     static const std::string kServiceDenmTsToUdp;
     static const std::string kServiceUdpToDenmTs;
+    static const std::string kInputTopicIvimTs;
+    static const std::string kOutputTopicIvimTs;
+    static const std::string kServiceIvimTsToUdp;
+    static const std::string kServiceUdpToIvimTs;
     static const std::string kInputTopicMapemTs;
     static const std::string kOutputTopicMapemTs;
     static const std::string kServiceMapemTsToUdp;
@@ -204,6 +192,7 @@ class Converter : public rclcpp::Node {
     rclcpp::Service<conversion_srvs::ConvertCpmTsToUdp>::SharedPtr convert_cpm_ts_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertDenmToUdp>::SharedPtr convert_denm_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertDenmTsToUdp>::SharedPtr convert_denm_ts_to_udp_service_;
+    rclcpp::Service<conversion_srvs::ConvertIvimTsToUdp>::SharedPtr convert_ivim_ts_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertMapemTsToUdp>::SharedPtr convert_mapem_ts_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertMcmUulmToUdp>::SharedPtr convert_mcm_uulm_to_udp_service_;
     rclcpp::Service<conversion_srvs::ConvertSpatemTsToUdp>::SharedPtr convert_spatem_ts_to_udp_service_;
@@ -214,6 +203,7 @@ class Converter : public rclcpp::Node {
     rclcpp::Service<conversion_srvs::ConvertUdpToCpmTs>::SharedPtr convert_udp_to_cpm_ts_service_;
     rclcpp::Service<conversion_srvs::ConvertUdpToDenm>::SharedPtr convert_udp_to_denm_service_;
     rclcpp::Service<conversion_srvs::ConvertUdpToDenmTs>::SharedPtr convert_udp_to_denm_ts_service_;
+    rclcpp::Service<conversion_srvs::ConvertUdpToIvimTs>::SharedPtr convert_udp_to_ivim_ts_service_;
     rclcpp::Service<conversion_srvs::ConvertUdpToMapemTs>::SharedPtr convert_udp_to_mapem_ts_service_;
     rclcpp::Service<conversion_srvs::ConvertUdpToMcmUulm>::SharedPtr convert_udp_to_mcm_uulm_service_;
     rclcpp::Service<conversion_srvs::ConvertUdpToSpatemTs>::SharedPtr convert_udp_to_spatem_ts_service_;
@@ -224,6 +214,7 @@ class Converter : public rclcpp::Node {
     mutable rclcpp::Publisher<cpm_ts_msgs::CollectivePerceptionMessage>::SharedPtr publisher_cpm_ts_;
     mutable rclcpp::Publisher<denm_msgs::DENM>::SharedPtr publisher_denm_;
     mutable rclcpp::Publisher<denm_ts_msgs::DENM>::SharedPtr publisher_denm_ts_;
+    mutable rclcpp::Publisher<ivim_ts_msgs::IVIM>::SharedPtr publisher_ivim_ts_;
     mutable rclcpp::Publisher<mapem_ts_msgs::MAPEM>::SharedPtr publisher_mapem_ts_;
     mutable rclcpp::Publisher<mcm_uulm_msgs::MCM>::SharedPtr publisher_mcm_uulm_;
     mutable rclcpp::Publisher<spatem_ts_msgs::SPATEM>::SharedPtr publisher_spatem_ts_;

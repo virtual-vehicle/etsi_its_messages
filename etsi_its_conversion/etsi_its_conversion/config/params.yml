@@ -9,6 +9,7 @@
       - cpm_ts
       - denm
       - denm_ts
+      - ivim_ts
       - mapem_ts
       - mcm_uulm
       - spatem_ts
@@ -18,6 +19,7 @@
       - cam_ts
       - cpm_ts
       - denm
+      - ivim_ts
       - mapem_ts
       - mcm_uulm
       - spatem_ts

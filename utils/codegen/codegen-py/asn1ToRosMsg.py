@@ -1,28 +1,7 @@
 #!/usr/bin/env python3
 
-# ==============================================================================
-# MIT License
-#
-# Copyright (c) 2023-2025 Institute for Automotive Engineering (ika), RWTH Aachen University
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-# ==============================================================================
+# SPDX-License-Identifier: MIT
+# Copyright Institute for Automotive Engineering (ika), RWTH Aachen University
 
 import argparse
 import glob
@@ -69,7 +48,7 @@ def loadJinjaTemplate() -> jinja2.environment.Template:
     return jinja_template
 
 
-def asn1TypeToRosMsg(type_name: str, asn1_type: Dict, asn1_types: Dict[str, Dict], asn1_values: Dict[str, Dict], asn1_sets: Dict[str, Dict], asn1_classes: Dict[str, Dict], asn1_raw: Dict[str, str], jinja_template: jinja2.environment.Template) -> str:
+def asn1TypeToRosMsg(type_name: str, asn1_type: Dict, asn1_types: Dict[str, Dict], asn1_values: Dict[str, Dict], asn1_sets: Dict[str, Dict], asn1_classes: Dict[str, Dict], asn1_raw: Dict[str, str], etsi_type: str, jinja_template: jinja2.environment.Template) -> str:
     """Converts parsed ASN.1 type information to a ROS message file string.
 
     Args:
@@ -87,7 +66,7 @@ def asn1TypeToRosMsg(type_name: str, asn1_type: Dict, asn1_types: Dict[str, Dict
     """
 
     # build jinja context based on asn1 type information
-    jinja_context = asn1TypeToJinjaContext(type_name, asn1_type, asn1_types, asn1_values, asn1_sets, asn1_classes)
+    jinja_context = asn1TypeToJinjaContext(type_name, asn1_type, asn1_types, asn1_values, asn1_sets, asn1_classes, etsi_type == "ivim_ts")
     if jinja_context is None:
         return None
 
@@ -200,7 +179,7 @@ def main():
     jinja_template = loadJinjaTemplate()
     for type_name, asn1_type in (pbar := tqdm(asn1_types.items(), desc="Generating ROS .msg files")):
         pbar.set_postfix_str(type_name)
-        ros_msg = asn1TypeToRosMsg(type_name, asn1_type, asn1_types, asn1_values, asn1_sets, asn1_classes, asn1_raw, jinja_template)
+        ros_msg = asn1TypeToRosMsg(type_name, asn1_type, asn1_types, asn1_values, asn1_sets, asn1_classes, asn1_raw, args.type, jinja_template)
         exportRosMsg(ros_msg, type_name, args.output_dir)
 
     # generate CMakeLists.txt and remove all files that are not required for top-level message type
@@ -211,14 +190,16 @@ def main():
         msg_type = "CAM"
     elif args.type == "denm_ts":
         msg_type = "DENM"
+    elif args.type == "ivim_ts":
+        msg_type = "IVIM"
     elif args.type == "mapem_ts":
         msg_type = "MAPEM"
+    elif args.type == "mcm_uulm":
+        msg_type = "MCM"
     elif args.type == "spatem_ts":
         msg_type = "SPATEM"
     elif args.type == "vam_ts":
         msg_type = "VAM"
-    elif args.type == "mcm_uulm":
-        msg_type = "MCM"
     msg_files = findDependenciesOfRosMessageType(os.path.join(args.output_dir, f"{msg_type}.msg"), [msg_type])
     msg_files += additionalMessageTypes(args.output_dir, msg_type)
     msg_files = sortMessageFiles(msg_files)
