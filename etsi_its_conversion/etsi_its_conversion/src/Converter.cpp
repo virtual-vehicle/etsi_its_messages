@@ -64,14 +64,14 @@ const std::string Converter::kInputTopicMcmUulm{"~/mcm_uulm/in"};
 const std::string Converter::kOutputTopicMcmUulm{"~/mcm_uulm/out"};
 const std::string Converter::kServiceMcmUulmToUdp{"~/mcm_uulm/udp"};
 const std::string Converter::kServiceUdpToMcmUulm{"~/udp/mcm_uulm"};
-const std::string Converter::kInputTopicSpatemTs{"~/spatem_ts/in"};
-const std::string Converter::kOutputTopicSpatemTs{"~/spatem_ts/out"};
-const std::string Converter::kServiceSpatemTsToUdp{"~/spatem_ts/udp"};
-const std::string Converter::kServiceUdpToSpatemTs{"~/udp/spatem_ts"};
 const std::string Converter::kInputTopicRtcmemTs{"~/rtcmem_ts/in"};
 const std::string Converter::kOutputTopicRtcmemTs{"~/rtcmem_ts/out"};
 const std::string Converter::kServiceRtcmemTsToUdp{"~/rtcmem_ts/udp"};
 const std::string Converter::kServiceUdpToRtcmemTs{"~/udp/rtcmem_ts"};
+const std::string Converter::kInputTopicSpatemTs{"~/spatem_ts/in"};
+const std::string Converter::kOutputTopicSpatemTs{"~/spatem_ts/out"};
+const std::string Converter::kServiceSpatemTsToUdp{"~/spatem_ts/udp"};
+const std::string Converter::kServiceUdpToSpatemTs{"~/udp/spatem_ts"};
 const std::string Converter::kInputTopicVamTs{"~/vam_ts/in"};
 const std::string Converter::kOutputTopicVamTs{"~/vam_ts/out"};
 const std::string Converter::kServiceVamTsToUdp{"~/vam_ts/udp"};
@@ -85,9 +85,9 @@ const std::string Converter::kEtsiMessagePayloadOffsetParam{"etsi_message_payloa
 const int Converter::kEtsiMessagePayloadOffsetParamDefault{4};
 const std::string Converter::kRos2UdpEtsiTypesParam{"ros2udp_etsi_types"};
 const std::string Converter::kUdp2RosEtsiTypesParam{"udp2ros_etsi_types"};
-const std::vector<std::string> Converter::kEtsiTypesParamSupportedOptions{"cam", "cam_ts", "cpm_ts", "denm", "denm_ts", "ivim_ts", "mapem_ts", "mcm_uulm", "spatem_ts", "rtcmem_ts", "vam_ts"};
+const std::vector<std::string> Converter::kEtsiTypesParamSupportedOptions{"cam", "cam_ts", "cpm_ts", "denm", "denm_ts", "ivim_ts", "mapem_ts", "mcm_uulm", "rtcmem_ts", "spatem_ts", "vam_ts"};
 const std::vector<std::string> Converter::kRos2UdpEtsiTypesParamDefault = Converter::kEtsiTypesParamSupportedOptions;
-const std::vector<std::string> Converter::kUdp2RosEtsiTypesParamDefault{"cam", "cpm_ts", "denm", "ivim_ts", "mapem_ts", "mcm_uulm", "spatem_ts", "rtcmem_ts", "vam_ts"};
+const std::vector<std::string> Converter::kUdp2RosEtsiTypesParamDefault{"cam", "cpm_ts", "denm", "ivim_ts", "mapem_ts", "mcm_uulm", "rtcmem_ts", "spatem_ts", "vam_ts"};
 const std::string Converter::kSubscriberQueueSizeParam{"subscriber_queue_size"};
 const int Converter::kSubscriberQueueSizeParamDefault{10};
 const std::string Converter::kPublisherQueueSizeParam{"publisher_queue_size"};
@@ -787,9 +787,9 @@ void Converter::rosToUdpSrvCallback(const std::shared_ptr<typename T_srv::Reques
   else if (type == "ivim_ts") btp_header_destination_port = kBtpHeaderDestinationPortIvi;
   else if (type == "mapem_ts") btp_header_destination_port = kBtpHeaderDestinationPortMapem;
   else if (type == "mcm_uulm") btp_header_destination_port = kBtpHeaderDestinationPortMcmUulm;
+  else if (type == "rtcmem_ts") btp_header_destination_port = kBtpHeaderDestinationPortRtcmem;
   else if (type == "spatem_ts") btp_header_destination_port = kBtpHeaderDestinationPortSpatem;
   else if (type == "vam_ts") btp_header_destination_port = kBtpHeaderDestinationPortVamTs;
-  else if (type == "rtcmem_ts") btp_header_destination_port = kBtpHeaderDestinationPortRtcmem;
   
   // encode ROS msg to UDP msg
   UdpPacket udp_msg;
@@ -859,8 +859,8 @@ void Converter::udpCallback(const UdpPacket::UniquePtr udp_msg) const {
   else if (destination_port == kBtpHeaderDestinationPortIvi) detected_etsi_type = "ivim_ts";
   else if (destination_port == kBtpHeaderDestinationPortMapem) detected_etsi_type = "mapem_ts";
   else if (destination_port == kBtpHeaderDestinationPortMcmUulm) detected_etsi_type = "mcm_uulm";
-  else if (destination_port == kBtpHeaderDestinationPortSpatem) detected_etsi_type = "spatem_ts";
   else if (destination_port == kBtpHeaderDestinationPortRtcmem) detected_etsi_type = "rtcmem_ts";
+  else if (destination_port == kBtpHeaderDestinationPortSpatem) detected_etsi_type = "spatem_ts";
   else if (destination_port == kBtpHeaderDestinationPortVamTs) detected_etsi_type = "vam_ts";
   else detected_etsi_type = "unknown";
 
@@ -943,6 +943,16 @@ void Converter::udpCallback(const UdpPacket::UniquePtr udp_msg) const {
     // publish msg
     publisher_mcm_uulm_->publish(msg);
 
+  } else if (detected_etsi_type == "rtcmem_ts") {
+
+    // decode buffer to ROS msg
+    rtcmem_ts_msgs::RTCMEM msg;
+    bool success = this->decodeBufferToRosMessage(&udp_msg->data[etsi_message_payload_offset_], msg_size, &asn_DEF_rtcmem_ts_RTCMEM, std::function<void(const rtcmem_ts_RTCMEM_t&, rtcmem_ts_msgs::RTCMEM&)>(etsi_its_rtcmem_ts_conversion::toRos_RTCMEM), msg);
+    if (!success) return;
+
+    // publish msg
+    publisher_rtcmem_ts_->publish(msg);
+
   } else if (detected_etsi_type == "spatem_ts") {
 
     // decode buffer to ROS msg
@@ -962,16 +972,6 @@ void Converter::udpCallback(const UdpPacket::UniquePtr udp_msg) const {
 
     // publish msg
     publisher_vam_ts_->publish(msg);
-
-  } else if (detected_etsi_type == "rtcmem_ts") {
-
-    // decode buffer to ROS msg
-    rtcmem_ts_msgs::RTCMEM msg;
-    bool success = this->decodeBufferToRosMessage(&udp_msg->data[etsi_message_payload_offset_], msg_size, &asn_DEF_rtcmem_ts_RTCMEM, std::function<void(const rtcmem_ts_RTCMEM_t&, rtcmem_ts_msgs::RTCMEM&)>(etsi_its_rtcmem_ts_conversion::toRos_RTCMEM), msg);
-    if (!success) return;
-
-    // publish msg
-    publisher_rtcmem_ts_->publish(msg);
 
   } else {
     RCLCPP_ERROR(this->get_logger(), "Detected ETSI message type '%s' not yet supported, dropping message", detected_etsi_type.c_str());
@@ -995,9 +995,9 @@ void Converter::rosCallback(const typename T_ros::UniquePtr msg,
   else if (type == "ivim_ts") btp_header_destination_port = kBtpHeaderDestinationPortIvi;
   else if (type == "mapem_ts") btp_header_destination_port = kBtpHeaderDestinationPortMapem;
   else if (type == "mcm_uulm") btp_header_destination_port = kBtpHeaderDestinationPortMcmUulm;
+  else if (type == "rtcmem_ts") btp_header_destination_port = kBtpHeaderDestinationPortRtcmem;
   else if (type == "spatem_ts") btp_header_destination_port = kBtpHeaderDestinationPortSpatem;
   else if (type == "vam_ts") btp_header_destination_port = kBtpHeaderDestinationPortVamTs;
-  else if (type == "rtcmem_ts") btp_header_destination_port = kBtpHeaderDestinationPortRtcmem;
 
   // encode ROS msg to UDP msg
   UdpPacket udp_msg;

@@ -184,10 +184,10 @@ def main():
 
     # generate CMakeLists.txt and remove all files that are not required for top-level message type
     msg_type = args.type.upper()
-    if args.type == "cpm_ts":
-        msg_type = "CollectivePerceptionMessage"
-    elif args.type == "cam_ts":
+    if args.type == "cam_ts":
         msg_type = "CAM"
+    elif args.type == "cpm_ts":
+        msg_type = "CollectivePerceptionMessage"
     elif args.type == "denm_ts":
         msg_type = "DENM"
     elif args.type == "ivim_ts":
@@ -196,12 +196,12 @@ def main():
         msg_type = "MAPEM"
     elif args.type == "mcm_uulm":
         msg_type = "MCM"
+    elif args.type == "rtcmem_ts":
+        msg_type = "RTCMEM"
     elif args.type == "spatem_ts":
         msg_type = "SPATEM"
     elif args.type == "vam_ts":
         msg_type = "VAM"
-    elif args.type == "rtcmem_ts":
-        msg_type = "RTCMEM"
     msg_files = findDependenciesOfRosMessageType(os.path.join(args.output_dir, f"{msg_type}.msg"), [msg_type])
     msg_files += additionalMessageTypes(args.output_dir, msg_type)
     msg_files = sortMessageFiles(msg_files)
