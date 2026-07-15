@@ -844,6 +844,7 @@ def asn1TypeToJinjaContext(asn1_type_name: str, asn1_type_info: Dict, asn1_types
 
         member_context = {
             "asn1_type_name": array_type,
+            "c_type_name": validCTypeAsGenByAsn1c(array_type),
             "ros_msg_type": f"{validRosType(array_type)}[]",
             "ros2_msg_type_file_name": f"{validRosTypeHeader(array_type)}",
             "ros_field_name": validRosField(array_name),
